@@ -1,0 +1,6 @@
+#layout-default {
+	background: white;
+	width: calc(100% - 100px);
+	height: calc(100vh - 100px);
+	margin: 50px;
+}

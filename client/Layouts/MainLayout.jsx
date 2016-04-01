@@ -1,7 +1,12 @@
 import React from 'react';
 
-export const MainLayout = ({content}) => (
-	<div className="main-layout">
-		{content}
+export const MainLayout = ({header, content}) => (
+	<div className="layout" id="layout-default">
+		<div id="header">
+			{header}
+		</div>
+		<div id="content">
+			{content}
+		</div>
 	</div>
 )

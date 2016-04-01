@@ -1,0 +1,5 @@
+.time-board-container {
+  width: calc(100% - 200px);
+  margin: 50px 100px;
+  float: left;
+}

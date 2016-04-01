@@ -1,0 +1,22 @@
+.new-timer {
+	color: #aaaaaa;
+	position: relative;
+}
+
+.new-timer i {
+	position: absolute;
+	top: 50%;
+	transform: translate3d(0, -50%, 0);
+}
+
+.new-timer input {
+	width: 100%;
+	appearance: none;
+	-webkit-appearance: none;
+	border: none;
+	border-bottom: #e6e6e6 2px solid;
+	font-size: 20px;
+	padding: 20px 0 20px 30px;
+	outline: none;
+}
+
