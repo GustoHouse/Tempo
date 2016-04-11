@@ -3,29 +3,33 @@ import TrackerReact from 'meteor/ultimatejs:tracker-react';
 
 Meteor.startup(function () {
  	Meteor.call('setCurrentTimer', (error, result)=>{
-	 	let userObj = Meteor.user();
- 	 if( userObj != undefined ){
-         
-	 	UserSession.set('currentTimer' + userObj._id , result);
-	 	}
+        
+        let userObj = Meteor.user();
+        
+        if( userObj != undefined ){
+
+            UserSession.set('currentTimer' + userObj._id , result);
+        
+        }
+        
  	});
 });
 
 export default class Header extends TrackerReact(React.Component) {
 	
-	constructor(){
-      super();
-      
-      this.state = {
-          subscription: {
-              loggedInUser: Meteor.subscribe("loggedInUser")
-          }
-      }
-  }
+    constructor(){
+        super();
+
+        this.state = {
+            subscription: {
+                loggedInUser: Meteor.subscribe("loggedInUser")
+            }
+        }
+    }
   
-  componentWillUnmount() {
+    componentWillUnmount() {
       this.state.subscription.loggedInUser.stop();
-  }
+    }
 	
 	
 	render(){

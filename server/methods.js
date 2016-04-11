@@ -8,15 +8,6 @@ Meteor.methods({
 	},
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	addTimer(currentTimer, timerName, userId){
 		
 		if (currentTimer != undefined) {
@@ -42,32 +33,36 @@ Meteor.methods({
 	      createdDate: moment().valueOf(),
 	      createdBy: userId
 	  }, function(error, id){
-				SyncedCron.add({
-					name: 'job_' +  id,
-					schedule: function(parser) {
-					 return parser.recur().every(1).second();
-					},
-					job: function() {
-					 	
-					 	findId = Timers.findOne({ _id: id });
-					 	
-					 	if (findId) {
-						 	
-						 	Timers.update( id, {
-						 	
-						 		$set: {
-							 	
-							 		elapsedTime: findId.elapsedTime + 1000
-							 	
-						 		}
-						 	
-					 		});
-						 	
-					 	}
-					
-					}
-				});
-		  	SyncedCron.start('job_' +  id);
+            
+          SyncedCron.add({
+                name: 'job_' +  id,
+                schedule: function(parser) {
+                 return parser.recur().every(1).second();
+                },
+                job: function() {
+
+                    findId = Timers.findOne({ _id: id });
+
+                    if (findId) {
+
+                        Timers.update( id, {
+
+                            $set: {
+
+                                elapsedTime: findId.elapsedTime + 1000
+
+                            }
+
+                        });
+
+                    }
+
+                }
+            });
+          
+		  	SyncedCron.pause();
+            SyncedCron.start();
+          
 	  });
 	  
 	  return newTimer;
@@ -155,7 +150,9 @@ Meteor.methods({
 			
 			}
 		});
-		SyncedCron.start('job_' +  timerId);
+        
+        SyncedCron.pause();
+		SyncedCron.start();
 	    
 	},
 
