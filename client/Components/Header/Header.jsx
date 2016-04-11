@@ -3,7 +3,11 @@ import TrackerReact from 'meteor/ultimatejs:tracker-react';
 
 Meteor.startup(function () {
  	Meteor.call('setCurrentTimer', (error, result)=>{
-	 	Session.set('currentTimer', result);
+	 	let userObj = Meteor.user();
+ 	 if( userObj != undefined ){
+         
+	 	UserSession.set('currentTimer' + userObj._id , result);
+	 	}
  	});
 });
 

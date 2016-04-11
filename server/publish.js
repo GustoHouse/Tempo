@@ -1,5 +1,6 @@
 Meteor.publish("allTimers", function(){
-    return Timers.find();
+    var currentUser = this.userId;
+    return Timers.find({createdBy: currentUser});
 });
 
 Meteor.publish('loggedInUser', function() {

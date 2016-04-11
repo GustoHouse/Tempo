@@ -5,7 +5,7 @@ import {format} from 'moment-duration-format';
 import SingleTimer from './SingleTimer.jsx';
 
 
-let increase = 0;
+/*let increase = 0;
 
 function updateTimers(){
 			
@@ -31,7 +31,7 @@ function updateTimers(){
 }
 	
 
-setInterval(updateTimers, 1000); 
+setInterval(updateTimers, 1000); */
 
 export default class TimerList extends TrackerReact(React.Component) {
     
@@ -54,10 +54,6 @@ export default class TimerList extends TrackerReact(React.Component) {
     timers(){
         return Timers.find({}, {sort: {createdDate: -1}}).fetch();
     }
-		
-		  
-    
-    
     
     render(){
 	    

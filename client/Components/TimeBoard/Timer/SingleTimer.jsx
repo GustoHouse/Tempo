@@ -8,11 +8,14 @@ export default class SingleTimer extends Component {
 		event.preventDefault();
 		
 		let timerID = this.props.timer._id;
-		
-		let timeDiff = new Date().getTime() + this.props.timer.elapsedTime  - this.props.timer.lastStarted;
 						
-		Meteor.call('stopTimer', timerID, timeDiff, ()=>{
-			Session.set('currentTimer', undefined);
+		Meteor.call('stopTimer', timerID, ()=>{
+			
+			let userObj = Meteor.user();
+ 	 if( userObj != undefined ){
+         
+	 	UserSession.set('currentTimer' + userObj._id , undefined);
+	 	}
 		});
 		
 	}
@@ -23,18 +26,30 @@ export default class SingleTimer extends Component {
 		
 		let timerID = this.props.timer._id;
 		
-		let currentTimer = Session.get('currentTimer', timerID);
+		let currentTimer;
+		
+		let userObj = Meteor.user();
+		if( userObj != undefined ){
+      currentTimer = UserSession.get('currentTimer' + userObj._id);
+      }	
 		
 		Meteor.call('playTimer', timerID, currentTimer, ()=>{
-			Session.set('currentTimer', timerID);
+					
+						let userObj = Meteor.user();
+ 	 if( userObj != undefined ){
+      
+	 	UserSession.set('currentTimer' + userObj._id , timerID);
+	 	}
+					
 		});
 		
 	}
+
 	
 	render(){	
 		
 	  return ( 
-	  	<div className="single-timer" id={this.props.timer._id} data-running={this.props.timer.isRunning} data-laststarted={this.props.timer.lastStarted} data-elapsed={this.props.timer.elapsedTime} data-runningtime="">
+	  	<div className="single-timer" id={this.props.timer._id} data-running={this.props.timer.isRunning} data-lastupdated={this.props.timer.lastUpdated} data-elapsed={this.props.timer.elapsedTime} data-runningtime="">
 	  		{this.props.timer.timerName}
 	  		<div className="stopwatch">{ moment.duration(this.props.timer.elapsedTime, "milliseconds").format("hh:mm:ss", { trim: false })}</div>
 

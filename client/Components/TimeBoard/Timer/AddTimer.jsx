@@ -6,17 +6,31 @@ export default class AddTimer extends React.Component {
         
 		event.preventDefault();
 		
-		let currentTimer = Session.get('currentTimer');
+		let currentTimer;
 		
-		timer = this.refs.timerName.value.trim(); 
+		let userObj = Meteor.user();
+ 	 if( userObj != undefined ){
+      currentTimer = UserSession.get('currentTimer' + userObj._id);
+      }		
+	
 		
-		if (timer == "") {
+		timerName = this.refs.timerName.value.trim(); 
+		
+		if (timerName == "") {
 			return;
 		} 
 		
-		Meteor.call('addTimer', timer, currentTimer, (error, result)=>{
-			Session.set('currentTimer', result);
-		});
+		if( userObj != undefined ){
+			Meteor.call('addTimer', currentTimer, timerName, userObj._id, (error, result)=>{
+				let userObj = Meteor.user();
+	 	 if( userObj == undefined ){
+	          return (<div></div>)
+	      }else{
+		 	UserSession.set('currentTimer' + userObj._id , result);
+		 	}
+				
+			});
+		}
 		
 		this.refs.timerName.value="";
       

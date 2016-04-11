@@ -27,3 +27,5 @@ dburles:collection-helpers
 
 momentjs:moment
 
+percolate:synced-cron
+benjaminrh:user-session

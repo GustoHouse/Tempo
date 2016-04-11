@@ -2,73 +2,160 @@ Meteor.methods({
     
 	setCurrentTimer() {
 		sendTimer = Timers.findOne({ isRunning: true });
-		 return sendTimer._id;
+		 if(sendTimer) {
+			 return sendTimer._id;
+			}
 	},
 	
 	
-	addTimer(timer, currentTimer){
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	addTimer(currentTimer, timerName, userId){
 		
-		Timers.update( currentTimer, {
+		if (currentTimer != undefined) {
 			
-			$set: {
-				
-				isRunning: false,
-				lastStarted: moment().valueOf()
-				
-			}
+			Timers.update( currentTimer, {
 			
-	  });
+				$set: {
+					
+					isRunning: false
+					
+				}
+			
+			});	
+			
+			SyncedCron.remove('job_' + currentTimer);
+			
+		}
 	   
 	  let newTimer = Timers.insert({
-	      timerName: timer,
+	      timerName: timerName,
 	      isRunning: true,
 	      elapsedTime: 0,
-	      lastStarted: moment().valueOf(),
-	      createdDate: moment().valueOf()
+	      createdDate: moment().valueOf(),
+	      createdBy: userId
+	  }, function(error, id){
+				SyncedCron.add({
+					name: 'job_' +  id,
+					schedule: function(parser) {
+					 return parser.recur().every(1).second();
+					},
+					job: function() {
+					 	
+					 	findId = Timers.findOne({ _id: id });
+					 	
+					 	if (findId) {
+						 	
+						 	Timers.update( id, {
+						 	
+						 		$set: {
+							 	
+							 		elapsedTime: findId.elapsedTime + 1000
+							 	
+						 		}
+						 	
+					 		});
+						 	
+					 	}
+					
+					}
+				});
+		  	SyncedCron.start('job_' +  id);
 	  });
 	  
 	  return newTimer;
 	    
-	},
+	},	
 	
-	stopTimer(timerId, runningTime){
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	stopTimer(timerId){
 	  
 	  Timers.update( timerId, {
 			
 			$set: {
 				
-				isRunning: false,
-				elapsedTime: runningTime
+				isRunning: false
 				
 			}
 			
 	  });
+	  console.log("STOP TIMER" + timerId);
+	  SyncedCron.remove('job_' +  timerId);
 	    
 	},
 	
 	playTimer(timerId, currentTimer){
 	   
-	  Timers.update( currentTimer, {
+	 if (currentTimer != undefined) {
 			
-			$set: {
-				
-				isRunning: false,
-				lastStarted: moment().valueOf()
-				
-			}
+			Timers.update( currentTimer, {
 			
-	  });
+				$set: {
+					
+					isRunning: false
+					
+				}
+			
+			});	
+			
+		}
+			
+		SyncedCron.remove('job_' + currentTimer);
 	  
 	  Timers.update( timerId, {
 			
 			$set: {
 				
-				isRunning: true,
-				lastStarted: moment().valueOf()
+				isRunning: true
 				
 			}
 			
 	  });
+	  
+	  SyncedCron.add({
+			name: 'job_' +  timerId,
+			schedule: function(parser) {
+			 return parser.recur().every(1).second();
+			},
+			job: function() {
+			 	
+			 	findId = Timers.findOne({ _id: timerId });
+			 	
+			 	if (findId) {
+				 	
+				 	Timers.update( timerId, {
+				 	
+				 		$set: {
+					 	
+					 		elapsedTime: findId.elapsedTime + 1000
+					 	
+				 		}
+				 	
+			 		});
+				 	
+			 	}
+			
+			}
+		});
+		SyncedCron.start('job_' +  timerId);
 	    
 	},
 
